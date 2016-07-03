@@ -11,7 +11,7 @@ public class Main {
 
     private static final Options options = new Options();
     private static final String fn_name = "fn", from_name = "from", to_name = "to", step_name = "step",
-            min_name = "min";
+            min_name = "min", n_name = "n", m_name = "m", c_name = "c";
 
     static {
         Option fn = new Option(fn_name, true, "Função para avaliação em 3 dimensões (escrever como seria a função em Java, podendo utilizar símbolos). Ex.: -fn x^2+y resulta na função z=x²+y. O valor de z será o utilizado na busca.");
@@ -34,6 +34,18 @@ public class Main {
         to.setRequired(true);
         options.addOption(to);
 
+        Option n = new Option(n_name, true, "Número de indivíduos na população (default: 100)");
+        n.setArgs(1);
+        options.addOption(n);
+
+        Option m = new Option(m_name, true, "Taxa de mutação (entre 0 e 1) (default: 0.05)");
+        m.setArgs(1);
+        options.addOption(m);
+
+        Option c = new Option(c_name, true, "Taxa de cruzamento (entre 0 e 1) (default: 0.60)");
+        c.setArgs(1);
+        options.addOption(c);
+
         Option min = new Option(min_name, false, "Determina que se deve buscar os mínimos da função.");
         options.addOption(min);
     }
@@ -47,6 +59,9 @@ public class Main {
             String[] from = cmd.getOptionValues(from_name);
             String[] to = cmd.getOptionValues(to_name);
             String step = StringUtils.deleteWhitespace(cmd.getOptionValue(step_name));
+            Integer n = cmd.hasOption(n_name) ? Integer.parseInt(cmd.getOptionValue(n_name)) : 100;
+            Double m = cmd.hasOption(m_name) ? Double.parseDouble(cmd.getOptionValue(m_name)) : 0.05;
+            Double c = cmd.hasOption(c_name) ? Double.parseDouble(cmd.getOptionValue(c_name)) : 0.60;
             Boolean min = cmd.hasOption(min_name);
 
             Expression function = new ExpressionBuilder(fn).variables("x", "y").build();
