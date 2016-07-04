@@ -1,18 +1,26 @@
 package com.brait.explorer.genetics;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 /**
  * Created by andre on 03/07/16.
  */
 @Data
-@RequiredArgsConstructor
+@Setter(AccessLevel.NONE)
 public class Chromossome {
 
-    private final int x, y;
-    private final int velocity[][];
+    private int x, y;
+    private final int velocity[];
 
+    public Chromossome(int x, int y, int[] velocity) {
+        this.velocity = velocity;
+        this.x = x;
+        this.y = y;
+    }
 
+    public void move() {
+        x += velocity[0];
+        y += velocity[1];
+    }
 
 }
