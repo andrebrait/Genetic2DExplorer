@@ -10,6 +10,10 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import static com.brait.explorer.Main.rand;
 
 /**
@@ -21,7 +25,7 @@ public class GeneticsRunner {
             min_name = "min", n_name = "n", m_name = "m", c_name = "c", mode_name = "mode", ngen_name = "ngen";
 
     public static int randMinusOne() {
-        return (int) Math.pow(-1.0, (double) rand.nextInt(10));
+        return (int) Math.pow(-1.0, rand.nextInt(5));
     }
 
     public static void run(CommandLine cmd) {
@@ -29,7 +33,7 @@ public class GeneticsRunner {
         String[] from = cmd.getOptionValues(from_name);
         String[] to = cmd.getOptionValues(to_name);
         String stepStr = StringUtils.deleteWhitespace(cmd.getOptionValue(step_name));
-        int ngen = cmd.hasOption(ngen_name) ? Integer.parseInt(cmd.getOptionValue(ngen_name)) : 1000;
+        int ngen = cmd.hasOption(ngen_name) ? Integer.parseInt(cmd.getOptionValue(ngen_name)) : 100;
         int n = cmd.hasOption(n_name) ? Integer.parseInt(cmd.getOptionValue(n_name)) : 100;
         double m = cmd.hasOption(m_name) ? Double.parseDouble(cmd.getOptionValue(m_name)) : 0.05;
         double c = cmd.hasOption(c_name) ? Double.parseDouble(cmd.getOptionValue(c_name)) : 0.60;
@@ -48,24 +52,26 @@ public class GeneticsRunner {
 
         Chromossome[] initialPopulation = new Chromossome[n];
         for (int i = 0; i < n; i++) {
-            initialPopulation[i] = new Chromossome(indexes[i][0], indexes[i][1], new int[]{randMinusOne() * rand.nextInt(10), randMinusOne() * rand.nextInt(10)});
+            initialPopulation[i] = new Chromossome(indexes[i][0], indexes[i][1], randMinusOne() * rand.nextInt(5), randMinusOne() * rand.nextInt(5));
         }
 
         StandardFitnessFunction stdFunc = new StandardFitnessFunction(min, environment);
         Chromossome[] newPopulation = initialPopulation;
         for (int gen = 0; gen < ngen; gen++) {
-            newPopulation = SelectionStrategy.select(stdFunc, newPopulation, c, m, n);
-            for (Chromossome chromossome : newPopulation) {
-                for (int k = 0; k < rand.nextInt(10); k++) {
-                    chromossome.move(environment.getXLen(), environment.getYLen());
+            for (Chromossome aNewPopulation : newPopulation) {
+                for (int k = 0; k < rand.nextInt(5); k++) {
+                    aNewPopulation.move(environment.getXLen(), environment.getYLen());
                 }
             }
+            newPopulation = SelectionStrategy.select(stdFunc, newPopulation, c, m, n, environment.getXLen(), environment.getYLen());
         }
 
         SelectionStrategy.sort(stdFunc, newPopulation);
 
-        for (int i = 0; i < Integer.min(newPopulation.length, n); i++) {
-            System.out.println(newPopulation[i].toString() + stdFunc.getCoordinates(newPopulation[i].getX(), newPopulation[i].getY()));
+        Set<Chromossome> results = new LinkedHashSet<>(Arrays.asList(newPopulation));
+
+        for (Chromossome cr : results) {
+            System.out.println(cr.toString() + " " + stdFunc.getCoordinates(cr.getX(), cr.getY()));
         }
 
     }

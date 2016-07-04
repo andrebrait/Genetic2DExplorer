@@ -13,12 +13,7 @@ public class StandardFitnessFunction {
     private final FunctionEnvironment3D environment;
 
     public double evaluate(int x, int y) {
-        double result = 0.0d;
-        try {
-            result = environment.getCoordinates()[x][y][2];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("lol");
-        }
+        double result = environment.getCoordinates()[x][y][2];
         if (min && Double.isInfinite(result)) {
             if (Double.compare(result, 0.0d) < 0) {
                 return Double.POSITIVE_INFINITY;

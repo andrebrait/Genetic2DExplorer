@@ -36,19 +36,17 @@ public class SelectionStrategy {
         Arrays.sort(population, new CompareChromossome(function));
     }
 
-    public static Chromossome[] select(StandardFitnessFunction function, Chromossome[] population, double crossoverRate, double mutationRate, int n) {
+    public static Chromossome[] select(StandardFitnessFunction function, Chromossome[] population, double crossoverRate, double mutationRate, int n, int xLen, int yLen) {
         sort(function, population);
 
-        int len = Integer.min(n, population.length);
-
-        int tenth = len / 10;
+        int tenth = population.length / 10;
         Chromossome[] best = new Chromossome[tenth];
         System.arraycopy(population, 0, best, 0, tenth);
 
-        int percentile = (int) (crossoverRate * len);
+        int percentile = (int) (crossoverRate * population.length);
         Chromossome[] selectedCrossOver = new Chromossome[percentile];
         for (int i = 0; i < percentile; i++) {
-            for (int j = tenth + i; j < len; j++) {
+            for (int j = tenth + i; j < population.length; j++) {
                 if (rand.nextDouble() < crossoverRate) {
                     selectedCrossOver[i] = population[j];
                 }
@@ -61,49 +59,28 @@ public class SelectionStrategy {
         int total = tenth + percentile;
         Chromossome[] toCrossOver = new Chromossome[total];
         System.arraycopy(best, 0, toCrossOver, 0, tenth);
-        System.arraycopy(selectedCrossOver, 0, toCrossOver, tenth, total - tenth);
+        System.arraycopy(selectedCrossOver, 0, toCrossOver, tenth, percentile);
 
         List<Chromossome> toCrossList = Lists.newArrayList(toCrossOver);
-        Collections.shuffle(toCrossList);
+        Collections.shuffle(toCrossList, rand);
         toCrossOver = toCrossList.toArray(toCrossOver);
 
-        int numCouples = toCrossOver.length / 2;
-        int crossedOverLength = numCouples * 16;
+        int numCouples = toCrossOver.length - 1;
+        int crossedOverLength = numCouples * 8;
+        int count = 0;
 
         Chromossome[] crossedOver = new Chromossome[crossedOverLength];
         Chromossome[] children;
-        for (int i = 0; i < numCouples * 2; i += 2) {
-            children = CrossoverStrategy.cross(toCrossOver[i], toCrossOver[i + 1], mutationRate);
-            System.arraycopy(children, 0, crossedOver, i / 2 * 16, 16);
+        for (int i = 0; i < numCouples; i++) {
+            children = CrossoverStrategy.cross(toCrossOver[i], toCrossOver[i + 1], mutationRate, xLen, yLen);
+            System.arraycopy(children, 0, crossedOver, count, children.length);
+            count += children.length;
         }
 
-        Chromossome[] retVal = new Chromossome[tenth + crossedOverLength];
-        System.arraycopy(best, 0, retVal, 0, tenth);
-        System.arraycopy(crossedOver, 0, retVal, tenth, crossedOverLength);
+        Set<Chromossome> resultSet = new HashSet<>(Arrays.asList(crossedOver));
+        resultSet.addAll(Arrays.asList(best));
 
-        /*LinkedHashMap<Chromossome, int[]> count = new LinkedHashMap<>();
-        for (int i = 0; i < retVal.length - 1; i++) {
-            if (!count.containsKey(retVal[i])) {
-                count.put(retVal[i], new int[]{0});
-            }
-            count.get(retVal[i])[0]++;
-        }
-
-        int index = 0;
-        int nItems = 0;
-        for(Map.Entry<Chromossome, int[]> entry : count.entrySet()){
-             nItems += Integer.min(entry.getValue()[0], 32);
-        }
-        retVal = new Chromossome[nItems];
-        for(Map.Entry<Chromossome, int[]> entry : count.entrySet()){
-            nItems = Integer.min(entry.getValue()[0], 32);
-            for(int i = 0; i < nItems; i++){
-                retVal[index] = entry.getKey();
-                index++;
-            }
-        }*/
-
-        return retVal;
+        return resultSet.toArray(new Chromossome[]{});
 
     }
 }

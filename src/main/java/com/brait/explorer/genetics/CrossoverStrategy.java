@@ -16,51 +16,45 @@ import static com.brait.explorer.Main.rand;
 public class CrossoverStrategy {
 
     @SuppressWarnings("unchecked")
-    public static Chromossome[] cross(Chromossome c1, Chromossome c2, double mutationRate) {
-        Chromossome[] children = new Chromossome[16];
-        int velocities[][] = new int[16][2];
+    public static Chromossome[] cross(Chromossome c1, Chromossome c2, double mutationRate, int xLen, int yLen) {
+        Chromossome[] children = new Chromossome[8];
+        int velocities[][] = new int[8][2];
 
-        velocities[0][0] = c1.getVelocity()[0];
-        velocities[0][1] = c2.getVelocity()[0];
-        velocities[1][0] = c1.getVelocity()[0];
-        velocities[1][1] = c2.getVelocity()[1];
-        velocities[2][0] = c1.getVelocity()[1];
-        velocities[2][1] = c2.getVelocity()[0];
-        velocities[3][0] = c1.getVelocity()[1];
-        velocities[3][1] = c2.getVelocity()[1];
+        velocities[0][0] = c1.getXVel();
+        velocities[0][1] = c2.getXVel();
+        velocities[1][0] = c1.getXVel();
+        velocities[1][1] = c2.getYVel();
+        velocities[2][0] = c1.getYVel();
+        velocities[2][1] = c2.getXVel();
+        velocities[3][0] = c1.getYVel();
+        velocities[3][1] = c2.getYVel();
 
-        velocities[4][0] = c1.getVelocity()[0] + c2.getVelocity()[0];
-        velocities[4][1] = c2.getVelocity()[0] - c1.getVelocity()[0];
-        velocities[5][0] = c1.getVelocity()[0] + c2.getVelocity()[1];
-        velocities[5][1] = c2.getVelocity()[1] - c1.getVelocity()[0];
-        velocities[6][0] = c1.getVelocity()[1] + c2.getVelocity()[0];
-        velocities[6][1] = c2.getVelocity()[0] - c1.getVelocity()[1];
-        velocities[7][0] = c1.getVelocity()[1] + c2.getVelocity()[1];
-        velocities[7][1] = c2.getVelocity()[1] - c1.getVelocity()[1];
-
+        int index, xVel, yVel;
         for (int i = 0; i < 4; i++) {
-            children[i] = new Chromossome(c1.getX(), c1.getY(), velocities[i]);
+            index = i;
+            xVel = velocities[index][0];
+            yVel = velocities[index][1];
             if (rand.nextDouble() < mutationRate) {
-                children[i].getVelocity()[i % 2] = GeneticsRunner.randMinusOne() * children[i].getVelocity()[i % 2] * rand.nextInt(2);
+                if (i % 2 == 0) {
+                    xVel = GeneticsRunner.randMinusOne() * xVel * (rand.nextInt(2) + 1);
+                } else {
+                    yVel = GeneticsRunner.randMinusOne() * yVel * (rand.nextInt(2) + 1);
+                }
             }
+            children[i] = new Chromossome(c1.getX(), c1.getY(), xVel, yVel);
         }
         for (int i = 4; i < 8; i++) {
-            children[i] = new Chromossome(c2.getX(), c2.getY(), velocities[i - 4]);
+            index = i - 4;
+            xVel = velocities[index][0];
+            yVel = velocities[index][1];
             if (rand.nextDouble() < mutationRate) {
-                children[i].getVelocity()[i % 2] = GeneticsRunner.randMinusOne() * children[i].getVelocity()[i % 2] * (rand.nextInt(2) + 1);
+                if (i % 2 == 0) {
+                    xVel = GeneticsRunner.randMinusOne() * xVel * (rand.nextInt(2) + 1);
+                } else {
+                    yVel = GeneticsRunner.randMinusOne() * yVel * (rand.nextInt(2) + 1);
+                }
             }
-        }
-        for (int i = 8; i < 12; i++) {
-            children[i] = new Chromossome(c2.getX(), c2.getY(), velocities[i - 8]);
-            if (rand.nextDouble() < mutationRate) {
-                children[i].getVelocity()[i % 2] = GeneticsRunner.randMinusOne() * children[i].getVelocity()[i % 2] * (rand.nextInt(2) + 1);
-            }
-        }
-        for (int i = 12; i < 16; i++) {
-            children[i] = new Chromossome(c2.getX(), c2.getY(), velocities[i - 12]);
-            if (rand.nextDouble() < mutationRate) {
-                children[i].getVelocity()[i % 2] = GeneticsRunner.randMinusOne() * children[i].getVelocity()[i % 2] * (rand.nextInt(2) + 1);
-            }
+            children[i] = new Chromossome(c2.getX(), c2.getY(), xVel, yVel);
         }
         return children;
     }
