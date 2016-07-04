@@ -39,14 +39,16 @@ public class SelectionStrategy {
     public static Chromossome[] select(StandardFitnessFunction function, Chromossome[] population, double crossoverRate, double mutationRate, int n) {
         sort(function, population);
 
-        int tenth = n / 10;
+        int len = Integer.min(n, population.length);
+
+        int tenth = len / 10;
         Chromossome[] best = new Chromossome[tenth];
         System.arraycopy(population, 0, best, 0, tenth);
 
-        int percentile = (int) (crossoverRate * n);
+        int percentile = (int) (crossoverRate * len);
         Chromossome[] selectedCrossOver = new Chromossome[percentile];
         for (int i = 0; i < percentile; i++) {
-            for (int j = tenth + i; j < n; j++) {
+            for (int j = tenth + i; j < len; j++) {
                 if (rand.nextDouble() < crossoverRate) {
                     selectedCrossOver[i] = population[j];
                 }
@@ -72,12 +74,34 @@ public class SelectionStrategy {
         Chromossome[] children;
         for (int i = 0; i < numCouples * 2; i += 2) {
             children = CrossoverStrategy.cross(toCrossOver[i], toCrossOver[i + 1], mutationRate);
-            System.arraycopy(children, 0, crossedOver, i / 2 * 8, 8); //FIXME
+            System.arraycopy(children, 0, crossedOver, i / 2 * 8, 8);
         }
 
         Chromossome[] retVal = new Chromossome[tenth + crossedOverLength];
         System.arraycopy(best, 0, retVal, 0, tenth);
         System.arraycopy(crossedOver, 0, retVal, tenth, crossedOverLength);
+
+        LinkedHashMap<Chromossome, int[]> count = new LinkedHashMap<>();
+        for (int i = 0; i < retVal.length - 1; i++) {
+            if (!count.containsKey(retVal[i])) {
+                count.put(retVal[i], new int[]{0});
+            }
+            count.get(retVal[i])[0]++;
+        }
+
+        int index = 0;
+        int nItems = 0;
+        for(Map.Entry<Chromossome, int[]> entry : count.entrySet()){
+             nItems += Integer.min(entry.getValue()[0], 16);
+        }
+        retVal = new Chromossome[nItems];
+        for(Map.Entry<Chromossome, int[]> entry : count.entrySet()){
+            nItems = Integer.min(entry.getValue()[0], 16);
+            for(int i = 0; i < nItems; i++){
+                retVal[index] = entry.getKey();
+                index++;
+            }
+        }
 
         return retVal;
 

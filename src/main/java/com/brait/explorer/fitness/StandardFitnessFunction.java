@@ -15,8 +15,8 @@ public class StandardFitnessFunction {
     public double evaluate(int x, int y) {
         double result = 0.0d;
         try {
-             result = environment.getCoordinates()[x][y][2];
-        } catch (ArrayIndexOutOfBoundsException e){
+            result = environment.getCoordinates()[x][y][2];
+        } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("lol");
         }
         if (min && Double.isInfinite(result)) {
@@ -30,6 +30,10 @@ public class StandardFitnessFunction {
         } else {
             return min ? -result : result;
         }
+    }
+
+    public String getCoordinates(int x, int y) {
+        return "x=" + environment.getCoordinates()[x][y][0] + "; y=" + environment.getCoordinates()[x][y][1] + "; z=" + environment.getCoordinates()[x][y][2] + ".";
     }
 
 }

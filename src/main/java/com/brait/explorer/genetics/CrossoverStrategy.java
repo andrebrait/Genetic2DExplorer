@@ -32,13 +32,13 @@ public class CrossoverStrategy {
         for (int i = 0; i < 4; i++) {
             children[i] = new Chromossome(c1.getX(), c1.getY(), velocities[i]);
             if (rand.nextDouble() < mutationRate) {
-                children[i].getVelocity()[i % 2] = GeneticsRunner.randMinusOne() * velocities[i][i % 2] * rand.nextInt(10);
+                children[i].getVelocity()[i % 2] = GeneticsRunner.randMinusOne() * children[i].getVelocity()[i % 2] * rand.nextInt(2);
             }
         }
         for (int i = 4; i < 8; i++) {
             children[i] = new Chromossome(c2.getX(), c2.getY(), velocities[i - 4]);
             if (rand.nextDouble() < mutationRate) {
-                children[i].getVelocity()[i % 2] = GeneticsRunner.randMinusOne() * velocities[i - 4][i % 2] * rand.nextInt(10);
+                children[i].getVelocity()[i % 2] = GeneticsRunner.randMinusOne() * children[i].getVelocity()[i % 2] * rand.nextInt(2);
             }
         }
         return children;

@@ -64,8 +64,8 @@ public class GeneticsRunner {
 
         SelectionStrategy.sort(stdFunc, newPopulation);
 
-        for (int i = 0; i < n; i++) {
-            System.out.println(newPopulation[i].toString() + ", z=" + stdFunc.evaluate(newPopulation[i].getX(), newPopulation[i].getY()));
+        for (int i = 0; i < Integer.min(newPopulation.length, n); i++) {
+            System.out.println(newPopulation[i].toString() + stdFunc.getCoordinates(newPopulation[i].getX(), newPopulation[i].getY()));
         }
 
     }
