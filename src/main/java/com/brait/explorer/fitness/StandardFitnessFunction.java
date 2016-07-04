@@ -1,24 +1,22 @@
 package com.brait.explorer.fitness;
 
-import net.objecthunter.exp4j.Expression;
+import com.brait.explorer.environment.FunctionEnvironment3D;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Created by andre on 03/07/16.
  */
+@RequiredArgsConstructor
 public class StandardFitnessFunction {
 
-    private final Boolean min;
-    private final Expression function;
+    private final boolean min;
+    private final FunctionEnvironment3D environment;
 
-    public StandardFitnessFunction(Expression function, Boolean min){
-        this.min = min;
-        this.function = function;
-
-    }
-
-    public Double evaluate(Double x, Double y){
-        Double result = function.setVariable("x", x).setVariable("y", y).evaluate();
-        return min ? -result : result;
+    public double evaluate(int x, int y){
+        if(x < 0 || y < 0 || x > environment.getXLen() || y > environment.getYLen()){
+            return min ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+        }
+        return min ? -environment.getCoordinates()[x][y][2] : environment.getCoordinates()[x][y][2];
     }
 
 }
