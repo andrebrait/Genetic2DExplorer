@@ -39,7 +39,7 @@ public class SelectionStrategy {
     public static Chromossome[] select(StandardFitnessFunction function, Chromossome[] population, double crossoverRate, double mutationRate, int n, int xLen, int yLen) {
         sort(function, population);
 
-        int tenth = population.length / 10;
+        int tenth = population.length / 6;
         Chromossome[] best = new Chromossome[tenth];
         System.arraycopy(population, 0, best, 0, tenth);
 
@@ -65,7 +65,7 @@ public class SelectionStrategy {
         Collections.shuffle(toCrossList, rand);
         toCrossOver = toCrossList.toArray(toCrossOver);
 
-        int numCouples = toCrossOver.length - 1;
+        int numCouples = Integer.max(toCrossOver.length - 1, 1);
         int crossedOverLength = numCouples * 8;
         int count = 0;
 
@@ -77,7 +77,8 @@ public class SelectionStrategy {
             count += children.length;
         }
 
-        Set<Chromossome> resultSet = new HashSet<>(Arrays.asList(crossedOver));
+        Set<Chromossome> resultSet = new HashSet<>(crossedOver.length + best.length);
+        resultSet.addAll(Arrays.asList(crossedOver));
         resultSet.addAll(Arrays.asList(best));
 
         return resultSet.toArray(new Chromossome[]{});

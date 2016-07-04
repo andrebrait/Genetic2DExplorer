@@ -25,7 +25,7 @@ public class GeneticsRunner {
             min_name = "min", n_name = "n", m_name = "m", c_name = "c", mode_name = "mode", ngen_name = "ngen";
 
     public static int randMinusOne() {
-        return (int) Math.pow(-1.0, rand.nextInt(5));
+        return (int) Math.pow(-1.0, rand.nextInt(10));
     }
 
     public static void run(CommandLine cmd) {
@@ -52,7 +52,7 @@ public class GeneticsRunner {
 
         Chromossome[] initialPopulation = new Chromossome[n];
         for (int i = 0; i < n; i++) {
-            initialPopulation[i] = new Chromossome(indexes[i][0], indexes[i][1], randMinusOne() * rand.nextInt(5), randMinusOne() * rand.nextInt(5));
+            initialPopulation[i] = new Chromossome(indexes[i][0], indexes[i][1], randMinusOne() * rand.nextInt(10), randMinusOne() * rand.nextInt(10));
         }
 
         StandardFitnessFunction stdFunc = new StandardFitnessFunction(min, environment);

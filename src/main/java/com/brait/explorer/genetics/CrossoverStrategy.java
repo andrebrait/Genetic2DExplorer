@@ -36,9 +36,9 @@ public class CrossoverStrategy {
             yVel = velocities[index][1];
             if (rand.nextDouble() < mutationRate) {
                 if (i % 2 == 0) {
-                    xVel = GeneticsRunner.randMinusOne() * xVel * (rand.nextInt(2) + 1);
+                    xVel = GeneticsRunner.randMinusOne() * xVel * rand.nextInt(3);
                 } else {
-                    yVel = GeneticsRunner.randMinusOne() * yVel * (rand.nextInt(2) + 1);
+                    yVel = GeneticsRunner.randMinusOne() * yVel * rand.nextInt(3);
                 }
             }
             children[i] = new Chromossome(c1.getX(), c1.getY(), xVel, yVel);
@@ -49,9 +49,9 @@ public class CrossoverStrategy {
             yVel = velocities[index][1];
             if (rand.nextDouble() < mutationRate) {
                 if (i % 2 == 0) {
-                    xVel = GeneticsRunner.randMinusOne() * xVel * (rand.nextInt(2) + 1);
+                    xVel = GeneticsRunner.randMinusOne() * xVel * rand.nextInt(3);
                 } else {
-                    yVel = GeneticsRunner.randMinusOne() * yVel * (rand.nextInt(2) + 1);
+                    yVel = GeneticsRunner.randMinusOne() * yVel * rand.nextInt(3);
                 }
             }
             children[i] = new Chromossome(c2.getX(), c2.getY(), xVel, yVel);
