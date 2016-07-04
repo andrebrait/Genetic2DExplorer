@@ -1,6 +1,8 @@
 package com.brait.explorer.runner;
 
 import com.brait.explorer.environment.FunctionEnvironment3D;
+import com.brait.explorer.fitness.SelectionStrategy;
+import com.brait.explorer.fitness.StandardFitnessFunction;
 import com.brait.explorer.genetics.Chromossome;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
@@ -8,7 +10,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Random;
+import static com.brait.explorer.Main.rand;
 
 /**
  * Created by andre on 04/07/16.
@@ -17,8 +19,6 @@ public class GeneticsRunner {
 
     public static final String fn_name = "fn", from_name = "from", to_name = "to", step_name = "step",
             min_name = "min", n_name = "n", m_name = "m", c_name = "c", mode_name = "mode", ngen_name = "ngen";
-
-    private final static Random rand = new Random();
 
     public static int randMinusOne() {
         return (int) Math.pow(-1.0, (double) rand.nextInt(10));
@@ -51,9 +51,23 @@ public class GeneticsRunner {
             initialPopulation[i] = new Chromossome(indexes[i][0], indexes[i][1], new int[]{randMinusOne() * rand.nextInt(10), randMinusOne() * rand.nextInt(10)});
         }
 
+        StandardFitnessFunction stdFunc = new StandardFitnessFunction(min, environment);
+        Chromossome[] newPopulation = initialPopulation;
         for (int gen = 0; gen < ngen; gen++) {
-
+            newPopulation = SelectionStrategy.select(stdFunc, newPopulation, c, m, n);
+            for (Chromossome chromossome : newPopulation) {
+                for (int k = 0; k < rand.nextInt(10); k++) {
+                    chromossome.move(environment.getXLen(), environment.getYLen());
+                }
+            }
         }
+
+        SelectionStrategy.sort(stdFunc, newPopulation);
+
+        for (int i = 0; i < n; i++) {
+            System.out.println(newPopulation[i].toString() + ", z=" + stdFunc.evaluate(newPopulation[i].getX(), newPopulation[i].getY()));
+        }
+
     }
 
 }

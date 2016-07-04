@@ -18,9 +18,19 @@ public class Chromossome {
         this.y = y;
     }
 
-    public void move() {
+    public void move(int xLen, int yLen) {
         x += velocity[0];
+        if (x < 0) {
+            x += xLen;
+        } else if (x >= xLen) {
+            x -= xLen;
+        }
         y += velocity[1];
+        if (y < 0) {
+            y += yLen;
+        } else if (y >= yLen) {
+            y -= yLen;
+        }
     }
 
 }

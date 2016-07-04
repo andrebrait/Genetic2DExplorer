@@ -12,11 +12,24 @@ public class StandardFitnessFunction {
     private final boolean min;
     private final FunctionEnvironment3D environment;
 
-    public double evaluate(int x, int y){
-        if(x < 0 || y < 0 || x > environment.getXLen() || y > environment.getYLen()){
-            return min ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+    public double evaluate(int x, int y) {
+        double result = 0.0d;
+        try {
+             result = environment.getCoordinates()[x][y][2];
+        } catch (ArrayIndexOutOfBoundsException e){
+            System.out.println("lol");
         }
-        return min ? -environment.getCoordinates()[x][y][2] : environment.getCoordinates()[x][y][2];
+        if (min && Double.isInfinite(result)) {
+            if (Double.compare(result, 0.0d) < 0) {
+                return Double.POSITIVE_INFINITY;
+            } else {
+                return Double.NEGATIVE_INFINITY;
+            }
+        } else if (Double.isNaN(result)) {
+            return result;
+        } else {
+            return min ? -result : result;
+        }
     }
 
 }

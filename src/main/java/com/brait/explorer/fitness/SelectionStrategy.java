@@ -3,20 +3,40 @@ package com.brait.explorer.fitness;
 import com.brait.explorer.genetics.Chromossome;
 import com.brait.explorer.genetics.CrossoverStrategy;
 import com.google.common.collect.Lists;
+import lombok.RequiredArgsConstructor;
 
 import java.util.*;
+
+import static com.brait.explorer.Main.rand;
 
 /**
  * Created by andre on 04/07/16.
  */
 public class SelectionStrategy {
 
+    @RequiredArgsConstructor
+    private static class CompareChromossome implements Comparator<Chromossome> {
+
+        private final StandardFitnessFunction function;
+
+        @Override
+        public int compare(Chromossome o1, Chromossome o2) {
+            double result1 = function.evaluate(o1.getX(), o1.getY());
+            double result2 = function.evaluate(o2.getX(), o2.getY());
+            return -Double.compare(result1, result2);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return false;
+        }
+    }
+
     public static void sort(final StandardFitnessFunction function, final Chromossome[] population) {
-        Arrays.sort(population, (c1, c2) -> (int) (function.evaluate(c1.getX(), c1.getY()) - function.evaluate(c2.getX(), c2.getY())));
+        Arrays.sort(population, new CompareChromossome(function));
     }
 
     public static Chromossome[] select(StandardFitnessFunction function, Chromossome[] population, double crossoverRate, double mutationRate, int n) {
-        Random rand = new Random();
         sort(function, population);
 
         int tenth = n / 10;
@@ -52,7 +72,7 @@ public class SelectionStrategy {
         Chromossome[] children;
         for (int i = 0; i < numCouples * 2; i += 2) {
             children = CrossoverStrategy.cross(toCrossOver[i], toCrossOver[i + 1], mutationRate);
-            System.arraycopy(children, 0, crossedOver, i * 8, 8);
+            System.arraycopy(children, 0, crossedOver, i / 2 * 8, 8); //FIXME
         }
 
         Chromossome[] retVal = new Chromossome[tenth + crossedOverLength];

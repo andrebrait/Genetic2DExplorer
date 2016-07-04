@@ -1,11 +1,14 @@
 package com.brait.explorer.genetics;
 
+import com.brait.explorer.Main;
 import com.brait.explorer.runner.GeneticsRunner;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import java.util.*;
+
+import static com.brait.explorer.Main.rand;
 
 /**
  * Created by andre on 04/07/16.
@@ -14,7 +17,6 @@ public class CrossoverStrategy {
 
     @SuppressWarnings("unchecked")
     public static Chromossome[] cross(Chromossome c1, Chromossome c2, double mutationRate) {
-        Random rand = new Random();
         Chromossome[] children = new Chromossome[8];
         int velocities[][] = new int[4][2];
 

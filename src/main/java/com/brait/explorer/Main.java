@@ -9,9 +9,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.math3.analysis.differentiation.DerivativeStructure;
 
+import java.util.Random;
+
 public class Main {
 
     private static final Options options = new Options();
+    public static final Random rand = new Random();
 
     static {
         Option ngen = new Option(GeneticsRunner.ngen_name, true, "Número de gerações a serem utilizadas (default: 1000)");
@@ -64,7 +67,7 @@ public class Main {
         CommandLineParser parser = new DefaultParser();
         try {
             CommandLine cmd = parser.parse(options, args);
-
+            GeneticsRunner.run(cmd);
         } catch (MissingOptionException e) {
             System.out.println("\nAs seguintes opções estão faltado: " + StringUtils.join(e.getMissingOptions(), ", ") + ".\n");
             HelpFormatter help = new HelpFormatter();
