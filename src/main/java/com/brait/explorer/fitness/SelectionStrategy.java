@@ -68,20 +68,20 @@ public class SelectionStrategy {
         toCrossOver = toCrossList.toArray(toCrossOver);
 
         int numCouples = toCrossOver.length / 2;
-        int crossedOverLength = numCouples * 8;
+        int crossedOverLength = numCouples * 16;
 
         Chromossome[] crossedOver = new Chromossome[crossedOverLength];
         Chromossome[] children;
         for (int i = 0; i < numCouples * 2; i += 2) {
             children = CrossoverStrategy.cross(toCrossOver[i], toCrossOver[i + 1], mutationRate);
-            System.arraycopy(children, 0, crossedOver, i / 2 * 8, 8);
+            System.arraycopy(children, 0, crossedOver, i / 2 * 16, 16);
         }
 
         Chromossome[] retVal = new Chromossome[tenth + crossedOverLength];
         System.arraycopy(best, 0, retVal, 0, tenth);
         System.arraycopy(crossedOver, 0, retVal, tenth, crossedOverLength);
 
-        LinkedHashMap<Chromossome, int[]> count = new LinkedHashMap<>();
+        /*LinkedHashMap<Chromossome, int[]> count = new LinkedHashMap<>();
         for (int i = 0; i < retVal.length - 1; i++) {
             if (!count.containsKey(retVal[i])) {
                 count.put(retVal[i], new int[]{0});
@@ -92,16 +92,16 @@ public class SelectionStrategy {
         int index = 0;
         int nItems = 0;
         for(Map.Entry<Chromossome, int[]> entry : count.entrySet()){
-             nItems += Integer.min(entry.getValue()[0], 16);
+             nItems += Integer.min(entry.getValue()[0], 32);
         }
         retVal = new Chromossome[nItems];
         for(Map.Entry<Chromossome, int[]> entry : count.entrySet()){
-            nItems = Integer.min(entry.getValue()[0], 16);
+            nItems = Integer.min(entry.getValue()[0], 32);
             for(int i = 0; i < nItems; i++){
                 retVal[index] = entry.getKey();
                 index++;
             }
-        }
+        }*/
 
         return retVal;
 
