@@ -8,8 +8,11 @@ import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -22,7 +25,7 @@ import static com.brait.explorer.Main.rand;
 public class GeneticsRunner {
 
     public static final String fn_name = "fn", from_name = "from", to_name = "to", step_name = "step",
-            min_name = "min", n_name = "n", m_name = "m", c_name = "c", mode_name = "mode", ngen_name = "ngen";
+            min_name = "min", n_name = "n", m_name = "m", c_name = "c", mode_name = "mode", ngen_name = "ngen", out_name = "out";
 
     public static int randMinusOne() {
         return (int) Math.pow(-1.0, rand.nextInt(10));
@@ -39,6 +42,7 @@ public class GeneticsRunner {
         double c = cmd.hasOption(c_name) ? Double.parseDouble(cmd.getOptionValue(c_name)) : 0.60;
         boolean min = cmd.hasOption(min_name);
         int mode = cmd.hasOption(mode_name) && cmd.getOptionValue(mode_name).equals("random") ? FunctionEnvironment3D.MODE_RANDOM : FunctionEnvironment3D.MODE_UNIFORM;
+        String outFolder = cmd.hasOption(out_name) ? cmd.getOptionValue(out_name) : null;
 
         Expression function = new ExpressionBuilder(fn).variables("x", "y").build();
 
@@ -55,12 +59,28 @@ public class GeneticsRunner {
             initialPopulation[i] = new Chromossome(indexes[i][0], indexes[i][1], randMinusOne() * rand.nextInt(10), randMinusOne() * rand.nextInt(10));
         }
 
+        File file = null;
+        StringBuilder sb = null;
         StandardFitnessFunction stdFunc = new StandardFitnessFunction(min, environment);
         Chromossome[] newPopulation = initialPopulation;
         for (int gen = 0; gen < ngen; gen++) {
-            for (Chromossome aNewPopulation : newPopulation) {
+            if (outFolder != null) {
+                file = new File(outFolder + (min ? "min" : "") + "/gen_" + gen + ".txt");
+                sb = new StringBuilder("x" + (min ? "min" : "") + gen + "\t" + "y" + (min ? "min" : "") + gen + "\t" + "z" + (min ? "min" : "") + gen + System.lineSeparator());
+            }
+            for (Chromossome chr : newPopulation) {
+                if (outFolder != null) {
+                    sb.append(stdFunc.getCoordinatesUnformatted(chr.getX(), chr.getY())).append(System.lineSeparator());
+                }
                 for (int k = 0; k < rand.nextInt(5); k++) {
-                    aNewPopulation.move(environment.getXLen(), environment.getYLen());
+                    chr.move(environment.getXLen(), environment.getYLen());
+                }
+            }
+            if (outFolder != null) {
+                try {
+                    FileUtils.writeStringToFile(file, sb.toString(), "ASCII");
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
             newPopulation = SelectionStrategy.select(stdFunc, newPopulation, c, m, n, environment.getXLen(), environment.getYLen());

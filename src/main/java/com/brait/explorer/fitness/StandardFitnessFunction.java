@@ -31,4 +31,8 @@ public class StandardFitnessFunction {
         return "x=" + environment.getCoordinates()[x][y][0] + "; y=" + environment.getCoordinates()[x][y][1] + "; z=" + environment.getCoordinates()[x][y][2] + ".";
     }
 
+    public String getCoordinatesUnformatted(int x, int y) {
+        return environment.getCoordinates()[x][y][0] + "\t" + environment.getCoordinates()[x][y][1] + "\t" + environment.getCoordinates()[x][y][2];
+    }
+
 }

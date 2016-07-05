@@ -60,6 +60,10 @@ public class Main {
 
         Option min = new Option(GeneticsRunner.min_name, false, "Determina que se deve buscar os mínimos da função.");
         options.addOption(min);
+
+        Option out = new Option(GeneticsRunner.out_name, true, "Determina a pasta para a saída dos arquivos, se alguma");
+        out.setArgs(1);
+        options.addOption(out);
     }
 
     public static void main(String[] args) {
